@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% block title %}Accueil{% endblock %}
+
+{% block content %}
+<!-- ══════════════════════════════════════════════════
+     IMMERSIVE HERO SECTION
+     ══════════════════════════════════════════════════ -->
+<section class="hero-section">
+  <div class="container position-relative z-1">
+    <div class="row align-items-center">
+      <!-- Left Hero Banner -->
+      <div class="col-lg-7" data-aos="fade-right">
+        <div class="mb-4 d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill" 
+             style="background: rgba(0, 242, 254, 0.1); border: 1.5px solid rgba(0, 242, 254, 0.25);">
+          <span class="spinner-grow spinner-grow-sm text-primary" role="status"></span>
+          <span class="text-primary small fw-bold text-uppercase letter-spacing-1">Plateforme Médicale IA Premium</span>
+        </div>
+        
+        <h1 class="display-3 fw-bold mb-4 lh-sm text-white">
+          L'Intelligence Clinique <br>
+          <span class="text-gradient-cyan">redéfinie par l'IA.</span>
+        </h1>
+        
+        <p class="lead mb-5 text-secondary" style="max-width: 600px; font-weight: 300;">
+          DermaNova associe le Deep Learning de pointe à une architecture SaaS haut de gamme pour offrir aux cliniques dermatologiques une précision de diagnostic absolue.
+        </p>
+        
+        <div class="d-flex flex-wrap gap-3">
+          {% if session.get('user_id') %}
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg px-4">
+              <i class="fa-solid fa-chart-line me-2"></i>Accéder au Dashboard
+            </a>
+            <a href="{{ url_for('predict') }}" class="btn btn-outline-primary btn-lg px-4">
+              <i class="fa-solid fa-flask-vial me-2"></i>Nouvelle Analyse
+            </a>
+          {% else %}
+            <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg px-5">
+              Accéder au Portail <i class="fa-solid fa-arrow-right ms-2 fs-7"></i>
+            </a>
+            <a href="{{ url_for('register') }}" class="btn btn-outline-primary btn-lg px-5">
+              Créer un Compte
+            </a>
+          {% endif %}
+        </div>
+      </div>
+      
+      <!-- Right Hero Panel -->
+      <div class="col-lg-5 mt-5 mt-lg-0" data-aos="fade-left" data-aos-delay="200">
+        <div class="glass-panel p-4 position-relative">
+          <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(0, 242, 254, 0.05) 0%, transparent 100%); z-index: -1;"></div>
+          <div class="text-center mb-4">
+            <div class="text-primary mb-3 fs-1" style="filter: drop-shadow(0 0 10px var(--cyan-glow));">
+              <i class="fa-solid fa-brain"></i>
+            </div>
+            <h3 class="fw-bold text-white">Technologie VGG16</h3>
+            <p class="small text-muted">Réseau neuronal convolutif entraîné sur un vaste dataset de cas dermatologiques cliniques certifiés.</p>
+          </div>
+          
+          <div class="d-flex justify-content-between align-items-center p-3 rounded" style="background: rgba(7, 11, 25, 0.6); border: 1.5px solid var(--card-border);">
+            <div>
+              <div class="text-uppercase small text-muted mb-1" style="font-size:0.75rem; letter-spacing:1px;">Précision IA</div>
+              <div class="fw-bold text-gradient-cyan fs-5">98.2%</div>
+            </div>
+            <div class="text-end">
+              <div class="text-uppercase small text-muted mb-1" style="font-size:0.75rem; letter-spacing:1px;">Vitesse d'Examen</div>
+              <div class="fw-bold text-gradient-cyan fs-5">&lt; 1.2s</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     L'EXPÉRIENCE DERMANOVA (Features)
+     ══════════════════════════════════════════════════ -->
+<section class="py-5 my-5">
+  <div class="container">
+    <div class="text-center mb-5 pb-3" data-aos="fade-up">
+      <h2 class="display-5 fw-bold mb-3 text-white">L'Excellence <span class="text-gradient-cyan">IA Médicale</span></h2>
+      <p class="mx-auto text-muted" style="max-width:600px;">Une interface pensée pour la tranquillité d'esprit des praticiens et l'optimisation absolue du parcours clinique.</p>
+    </div>
+    
+    <div class="row g-4">
+      <!-- Card 1 -->
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="glass-panel p-5 h-100 text-center transition-up">
+          <div class="mb-4 d-inline-flex align-items-center justify-content-center" 
+               style="width: 65px; height: 65px; border-radius: 50%; background: rgba(0, 242, 254, 0.1); color: var(--cyan-primary); font-size: 1.75rem; box-shadow: 0 0 12px var(--cyan-glow);">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </div>
+          <h4 class="fw-bold mb-3 text-white">Design Immersif</h4>
+          <p class="mb-0 small text-muted">Fini les interfaces médicales austères. DermaNova offre un environnement premium, apaisant et minimaliste facilitant le diagnostic.</p>
+        </div>
+      </div>
+      
+      <!-- Card 2 -->
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="glass-panel p-5 h-100 text-center transition-up">
+          <div class="mb-4 d-inline-flex align-items-center justify-content-center" 
+               style="width: 65px; height: 65px; border-radius: 50%; background: rgba(127, 0, 255, 0.1); color: var(--purple-hover); font-size: 1.75rem; box-shadow: 0 0 12px var(--purple-glow);">
+            <i class="fa-solid fa-user-shield"></i>
+          </div>
+          <h4 class="fw-bold mb-3 text-white">Confidentialité Cryptée</h4>
+          <p class="mb-0 small text-muted">Vos clichés et données cliniques de santé sont protégés. Architecture de traitement cloud et locale répondant aux exigences HIPAA.</p>
+        </div>
+      </div>
+      
+      <!-- Card 3 -->
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+        <div class="glass-panel p-5 h-100 text-center transition-up">
+          <div class="mb-4 d-inline-flex align-items-center justify-content-center" 
+               style="width: 65px; height: 65px; border-radius: 50%; background: rgba(0, 114, 255, 0.1); color: var(--blue-hover); font-size: 1.75rem; box-shadow: 0 0 12px var(--blue-glow);">
+            <i class="fa-solid fa-file-invoice-medical"></i>
+          </div>
+          <h4 class="fw-bold mb-3 text-white">Rapports Académiques</h4>
+          <p class="mb-0 small text-muted">Générez instantanément des rapports de diagnostic détaillés, exportables au format PDF pour enrichir vos dossiers patients.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     SECTION CALL TO ACTION
+     ══════════════════════════════════════════════════ -->
+<section class="py-5 mb-5" data-aos="zoom-in" data-aos-duration="1000">
+  <div class="container">
+    <div class="glass-panel p-5 text-center position-relative overflow-hidden" 
+         style="border-color: var(--cyan-primary); box-shadow: 0 0 25px var(--cyan-glow);">
+      <div class="position-absolute top-50 start-50 translate-middle w-100 h-100" 
+           style="background: radial-gradient(circle, rgba(0, 242, 254, 0.15) 0%, transparent 60%); z-index: -1;"></div>
+      
+      <h2 class="display-5 fw-bold mb-4 text-white">Rejoignez l'Élite Médicale Assistée par IA</h2>
+      <p class="lead mx-auto mb-5 text-muted" style="max-width:550px;">
+        Entrez dès maintenant dans le futur clinique dermatologique de précision.
+      </p>
+      
+      {% if not session.get('user_id') %}
+        <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg px-5 py-3 text-uppercase" style="letter-spacing:1px; font-size:0.9rem;">Démarrer Gratuitement</a>
+      {% else %}
+        <a href="{{ url_for('predict') }}" class="btn btn-primary btn-lg px-5 py-3 text-uppercase" style="letter-spacing:1px; font-size:0.9rem;">Lancer un Diagnostic</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- ==============================
+     TESTIMONIALS SECTION
+     ============================= -->
+<section class="py-5 my-5" data-aos="fade-up">
+  <div class="container">
+    <h2 class="text-center mb-5 text-white">Ce que disent nos cliniciens</h2>
+    <div class="row g-4">
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="glass-panel p-4 h-100 text-center">
+          <i class="fa-solid fa-heart-pulse fa-2x text-gradient-cyan mb-3 floating-icon"></i>
+          <p class="text-muted">“Une précision diagnostique qui change la donne.” – Dr. Léa Moreau</p>
+        </div>
+      </div>
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="glass-panel p-4 h-100 text-center">
+          <i class="fa-solid fa-brain fa-2x text-gradient-cyan mb-3 floating-icon"></i>
+          <p class="text-muted">“Le workflow est rapide et sécurisé.” – Dr. Karim Boulanger</p>
+        </div>
+      </div>
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+        <div class="glass-panel p-4 h-100 text-center">
+          <i class="fa-solid fa-user-md fa-2x text-gradient-cyan mb-3 floating-icon"></i>
+          <p class="text-muted">“Mes patients sont plus confiants.” – Dr. Sophie Dupont</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+<style>
+.transition-up {
+  transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+}
+.transition-up:hover {
+  transform: translateY(-8px) !important;
+  border-color: var(--cyan-primary) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+.letter-spacing-1 {
+  letter-spacing: 1px;
+}
+</style>

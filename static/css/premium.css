@@ -1,0 +1,289 @@
+/* premium.css – Premium medical AI UI */
+
+/* ---- Color palette ---- */
+:root {
+  /* Primary dark shades - premium deep navy blue */
+  --color-bg-primary: #0a1128;          /* Deep navy blue background */
+  --color-bg-dark: #001f54;            /* Slate dark blue */
+  --color-bg-gradient-start: #0a1128;  /* Gradient start */
+  --color-bg-gradient-end: #001f54;    /* Gradient end */
+  /* Accent palette */
+  --color-accent-pink1: #00b4d8;        /* Vivid medical cyan */
+  --color-accent-pink2: #90e0ef;        /* Light sky blue */
+  /* Neutral */
+  --color-white: #ffffff;
+  --color-light-gray: #f5f5f5;
+  --color-gray: #b0b0b0;
+}
+
+/* ---- Global resets & base ---- */
+/* Updated gradient and hero section */
+/* Ensure glass panels appear above background gradient */
+.glass-panel {
+  position: relative;
+  z-index: 2;
+  background: rgba(11, 17, 38, 0.6); /* semi‑transparent dark bg */
+  color: var(--color-white);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+}
+
+/* Background gradient should sit behind everything */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, var(--color-bg-gradient-start), var(--color-bg-gradient-end));
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Hero section full-screen */
+.hero-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 0;
+}
+
+/* Pink text gradient (reuse .text-gradient-cyan class) */
+.text-gradient-cyan {
+  background: linear-gradient(45deg, var(--color-accent-pink1), var(--color-accent-pink2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background: transparent;
+  overflow-x: hidden;
+  position: relative;
+  color: var(--color-white);
+}
+
+/* Glass‑morphism utility class */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+  padding: 1.5rem;
+}
+
+/* Navbar */
+.navbar-premium {
+  background: rgba(10, 14, 39, 0.85);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+}
+.navbar-premium .nav-link {
+  color: var(--color-accent-pink1);
+  transition: color 0.3s ease;
+}
+.navbar-premium .nav-link:hover {
+  color: var(--color-accent-pink1);
+}
+
+/* Sidebar and main-content layout styles moved to dashboard.css */
+
+/* Card – glass style */
+.card-glass {
+  background: rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.12);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-glass:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+}
+
+/* Buttons – premium hover */
+.btn-premium {
+  background: var(--color-accent-pink1);
+  color: var(--color-white);
+  border: 1px solid var(--color-accent-pink1);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+.btn-premium:hover {
+  background: var(--color-accent-pink1);
+  color: var(--color-bg-primary);
+  box-shadow: 0 4px 12px rgba(232, 191, 226, 0.5);
+}
+
+/* Form inputs */
+.form-control {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: var(--color-white);
+  border-radius: 8px;
+}
+.form-control:focus {
+  background: rgba(255,255,255,0.08);
+  border-color: var(--color-accent-pink1);
+  box-shadow: none;
+  color: var(--color-white);
+}
+
+/* Table – glass rows */
+.table-glass tbody tr {
+  background: rgba(255,255,255,0.04);
+  transition: background 0.2s ease;
+}
+.table-glass tbody tr:hover {
+  background: rgba(255,255,255,0.08);
+}
+.table-glass th, .table-glass td {
+  color: var(--color-white);
+  border-top: none;
+}
+
+/* Particles background container */
+#particles-bg {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: -1;
+}
+
+/* Scroll‑to‑top button */
+#scrollTop {
+  position: fixed;
+  bottom: 2rem; right: 2rem;
+  background: var(--color-accent-pink1);
+  color: var(--color-bg-primary);
+  border: none;
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; visibility: hidden; transition: opacity 0.3s ease;
+  cursor: pointer;
+}
+#scrollTop.show { opacity: 1; visibility: visible; }
+
+/* AOS custom easing */
+[data-aos] { transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1); }
+
+/* Responsive typography */
+h1, .h1 { font-size: calc(1.375rem + 1.5vw); font-weight: 600; }
+h2, .h2 { font-size: calc(1.325rem + .9vw); }
+
+/* Utility helpers */
+.text-accent { color: var(--color-accent-pink1) !important; }
+.mt-4 { margin-top: 1.5rem !important; }
+
+/* ══════════════════════════════════════════════════
+   VIVID ELECTRIC CYAN GLOW THEME & PILL BUTTONS (Matching Image)
+   ══════════════════════════════════════════════════ */
+
+/* Background radial glow spots matching the photo */
+.hero-bg-glow {
+  position: fixed;
+  top: 25%;
+  left: 15%;
+  width: 55vw;
+  height: 55vw;
+  background: radial-gradient(circle, rgba(0, 242, 254, 0.18) 0%, rgba(0, 180, 216, 0.05) 45%, transparent 70%);
+  z-index: 0;
+  pointer-events: none;
+  filter: blur(90px);
+  animation: pulseGlow 12s ease-in-out infinite alternate;
+}
+
+.hero-bg-glow-2 {
+  position: fixed;
+  top: 15%;
+  right: 10%;
+  width: 45vw;
+  height: 45vw;
+  background: radial-gradient(circle, rgba(0, 119, 182, 0.12) 0%, transparent 65%);
+  z-index: 0;
+  pointer-events: none;
+  filter: blur(110px);
+  animation: pulseGlow2 15s ease-in-out infinite alternate;
+}
+
+@keyframes pulseGlow {
+  0% { transform: scale(1) translate(0, 0); opacity: 0.8; }
+  100% { transform: scale(1.2) translate(4%, 3%); opacity: 1.0; }
+}
+
+@keyframes pulseGlow2 {
+  0% { transform: scale(1.1) translate(0, 0); opacity: 0.7; }
+  100% { transform: scale(0.95) translate(-4%, -2%); opacity: 0.95; }
+}
+
+/* Override Bootstrap blue text to medical electric cyan */
+.text-primary {
+  color: #00f2fe !important;
+}
+
+/* Lighter, bluish-grey readable description texts */
+.text-secondary {
+  color: #a5cbd6 !important; /* Vivid and highly readable light blue-grey */
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
+}
+
+.text-muted {
+  color: #8da4b0 !important;
+}
+
+/* Clean, premium pill-shaped buttons exactly like the Vivobook image */
+.btn-primary {
+  background: #00f2fe !important;
+  border: none !important;
+  color: #0a1128 !important; /* Deep navy text for contrast */
+  font-weight: 700 !important;
+  border-radius: 50px !important;
+  padding: 0.85rem 2.5rem !important;
+  font-family: "Outfit", sans-serif;
+  box-shadow: 0 4px 18px rgba(0, 242, 254, 0.35) !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+.btn-primary:hover {
+  background: #90e0ef !important;
+  color: #001f54 !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 25px rgba(0, 242, 254, 0.55) !important;
+}
+
+.btn-outline-primary {
+  background: transparent !important;
+  border: 1.5px solid #00f2fe !important;
+  color: #00f2fe !important;
+  font-weight: 700 !important;
+  border-radius: 50px !important;
+  padding: 0.85rem 2.5rem !important;
+  font-family: "Outfit", sans-serif;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+.btn-outline-primary:hover {
+  background: rgba(0, 242, 254, 0.12) !important;
+  border-color: #90e0ef !important;
+  color: #ffffff !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 6px 20px rgba(0, 242, 254, 0.2) !important;
+}
+
+/* Ensure brand logo and header accents are aligned */
+.brand-ai, .text-gradient-cyan {
+  background: linear-gradient(45deg, #00f2fe, #90e0ef);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+}
+
+.brand-icon {
+  color: #00f2fe;
+  filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.5));
+}
+
+/* End of premium.css */

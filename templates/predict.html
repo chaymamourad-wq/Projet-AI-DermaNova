@@ -1,0 +1,345 @@
+{% extends "base.html" %}
+{% block title %}Diagnostic IA{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}?v=2">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+  <!-- Dynamic Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-brand">
+        <i class="fa-solid fa-house-laptop"></i>
+        <span>Derma<span class="brand-ai">Nova</span></span>
+      </div>
+      <button class="sidebar-close btn btn-link text-white d-lg-none" onclick="closeSidebar()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Espace Clinique</div>
+      <a href="{{ url_for('dashboard') }}" class="sidebar-link">
+        <i class="fa-solid fa-chart-pie"></i><span>Tableau de Bord</span>
+      </a>
+      <a href="{{ url_for('predict') }}" class="sidebar-link active">
+        <i class="fa-solid fa-microscope"></i><span>Nouvelle Analyse</span>
+        <span class="sidebar-badge">IA</span>
+      </a>
+      <a href="{{ url_for('patients') }}" class="sidebar-link">
+        <i class="fa-solid fa-clock-history"></i><span>Dossiers Patients</span>
+      </a>
+      
+      <div class="sidebar-section-label mt-4">Informations</div>
+      <a href="{{ url_for('about') }}" class="sidebar-link">
+        <i class="fa-solid fa-circle-info"></i><span>À propos</span>
+      </a>
+      <a href="{{ url_for('contact') }}" class="sidebar-link">
+        <i class="fa-solid fa-headset"></i><span>Contact Support</span>
+      </a>
+      
+      {% if session.get('role') == 'admin' %}
+      <div class="sidebar-section-label mt-4">Sécurité & Admin</div>
+      <a href="{{ url_for('admin') }}" class="sidebar-link sidebar-link-admin">
+        <i class="fa-solid fa-user-shield"></i><span>Panel Super-Admin</span>
+      </a>
+      {% endif %}
+    </nav>
+    
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="su-avatar">{{ session.get('username','?')[0]|upper }}</div>
+        <div class="su-info">
+          <div class="su-name text-white">{{ session.get('full_name','')[:15] }}</div>
+          <div class="su-role">{{ session.get('role','user')|capitalize }}</div>
+        </div>
+      </div>
+      <a href="{{ url_for('logout') }}" class="sidebar-logout" title="Déconnexion">
+        <i class="fa-solid fa-power-off"></i>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Mobile Overlay -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <!-- Main Content Workspace -->
+  <div class="dashboard-main">
+    <!-- Topbar Header -->
+    <header class="dash-topbar">
+      <button class="btn text-white d-lg-none me-3 p-0" id="sidebarToggle">
+        <i class="fa-solid fa-bars fs-3"></i>
+      </button>
+      <div>
+        <h5 class="dash-page-title text-gradient-cyan">Laboratoire Diagnostique</h5>
+        <p class="text-muted small mb-0">Renseignez les données cliniques du patient pour l'analyse IA</p>
+      </div>
+    </header>
+
+    <!-- Dash Content -->
+    <div class="dash-content p-4">
+      <!-- Tip Alert -->
+      <div class="alert alert-custom alert-info mb-4" data-aos="fade-down">
+        <div class="d-flex align-items-center gap-2">
+          <i class="fa-solid fa-circle-info text-info fs-5"></i>
+          <span><strong>Protocole Clinique :</strong> Uploadez une image nette, uniforme et centrée sur la lésion dermatologique pour obtenir un indice prévisionnel hautement fiable.</span>
+        </div>
+      </div>
+
+      <form method="POST" enctype="multipart/form-data" id="predictForm">
+        <div class="row g-4">
+          <!-- Left side - patient data -->
+          <div class="col-lg-5">
+            <div class="dash-card h-100" data-aos="fade-right">
+              <div class="dc-header">
+                <h6 class="dc-title"><i class="fa-solid fa-id-card me-2 text-primary"></i>Fiche Diagnostique</h6>
+              </div>
+              <div class="dc-body">
+                <!-- Patient Name -->
+                <div class="auth-field mb-3">
+                  <label for="name" class="form-label text-white">Nom Complet du Patient *</label>
+                  <div class="input-with-icon">
+                    <i class="fa-solid fa-hospital-user field-icon"></i>
+                    <input type="text" class="auth-input" name="name" id="name"
+                           placeholder="Prénom NOM" required>
+                  </div>
+                </div>
+
+                <div class="row g-3">
+                  <!-- Age -->
+                  <div class="col-6">
+                    <div class="auth-field">
+                      <label for="age" class="form-label text-white">Âge</label>
+                      <div class="input-with-icon">
+                        <i class="fa-solid fa-cake-candles field-icon"></i>
+                        <input type="number" class="auth-input" name="age" id="age"
+                               placeholder="Ex : 38" min="1" max="120">
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Gender -->
+                  <div class="col-6">
+                    <div class="auth-field">
+                      <label for="gender" class="form-label text-white">Genre</label>
+                      <select class="auth-input ps-3" name="gender" id="gender">
+                        <option value="Homme">Homme</option>
+                        <option value="Femme">Femme</option>
+                        <option value="Autre">Autre</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="auth-field mt-3">
+                  <label for="notes" class="form-label text-white">Symptomatologie & Localisation</label>
+                  <textarea class="auth-input" name="notes" id="notes" rows="4"
+                            placeholder="Ex : Naevus atypique sur l'épaule gauche, contours irréguliers..."></textarea>
+                </div>
+
+                <!-- Praticien Info -->
+                <div class="d-flex align-items-center gap-3 p-3 rounded mt-3" style="background: rgba(0, 242, 254, 0.05); border: 1.5px solid rgba(0, 242, 254, 0.15)">
+                  <div class="su-avatar">{{ session.get('username','?')[0]|upper }}</div>
+                  <div>
+                    <div class="fw-bold text-white small">{{ session.get('full_name','Médecin') }}</div>
+                    <div class="text-muted small">Médecin Expert Référent</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right side - Image Upload Bay -->
+          <div class="col-lg-7">
+            <div class="dash-card h-100" data-aos="fade-left">
+              <div class="dc-header">
+                <h6 class="dc-title"><i class="fa-solid fa-clipboard-question me-2 text-success"></i>Cliché Dermatologique</h6>
+                <span class="text-muted small">Formats: PNG, JPG, JPEG (Max 10Mo)</span>
+              </div>
+              <div class="dc-body">
+                <!-- Dropzone Area -->
+                <div class="upload-zone p-4 rounded text-center" id="uploadZone"
+                     style="border: 2px dashed rgba(0, 242, 254, 0.3); background: rgba(18, 28, 59, 0.3); transition: var(--transition); cursor: pointer;"
+                     ondragover="handleDragOver(event)"
+                     ondragleave="handleDragLeave()"
+                     ondrop="handleDrop(event)"
+                     onclick="document.getElementById('imageInput').click()">
+                  
+                  <div id="uzContent">
+                    <div class="mb-3 text-primary" style="font-size: 3rem; filter: drop-shadow(0 0 10px var(--cyan-glow));">
+                      <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </div>
+                    <h5 class="text-white fw-bold mb-2">Déposer l'imagerie médicale ici</h5>
+                    <p class="text-muted small mb-3">ou parcourez votre ordinateur</p>
+                    <button type="button" class="btn btn-outline-primary btn-sm px-4">
+                      Sélectionner le Cliché
+                    </button>
+                  </div>
+
+                  <!-- Upload Preview -->
+                  <div class="d-none" id="uzPreview" style="position: relative;">
+                    <img id="previewImg" src="" alt="Diagnostic Preview" class="img-fluid rounded" style="max-height: 200px; box-shadow: 0 0 15px rgba(0,0,0,0.5);">
+                    <div class="mt-3">
+                      <span class="text-white fw-bold d-block small" id="uzFileName"></span>
+                      <span class="text-muted small" id="uzFileSize"></span>
+                    </div>
+                    <button type="button" class="btn btn-danger btn-sm mt-3 px-3 py-1" onclick="removeImage(event)">
+                      <i class="fa-solid fa-trash-can me-2"></i>Retirer le Cliché
+                    </button>
+                  </div>
+
+                  <input type="file" name="image" id="imageInput" accept=".png,.jpg,.jpeg,.bmp,.webp"
+                         required class="d-none" onchange="previewImage(this)">
+                </div>
+
+                <!-- Analysis Quality Tips -->
+                <div class="mt-4 p-3 rounded" style="background: rgba(11, 17, 38, 0.3); border: 1px solid var(--card-border);">
+                  <h6 class="text-white fw-bold mb-3 small"><i class="fa-solid fa-circle-nodes text-warning me-2"></i>Contrôle de conformité de l'imagerie :</h6>
+                  <div class="row g-3">
+                    <div class="col-6">
+                      <div class="small text-white d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-circle-check text-success"></i>
+                        <span>Cliché macroscopique net</span>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="small text-white d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-circle-check text-success"></i>
+                        <span>Éclairage médical uniforme</span>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="small text-white d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-circle-xmark text-danger"></i>
+                        <span>Éviter les reflets et ombres</span>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="small text-white d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-circle-xmark text-danger"></i>
+                        <span>Pas de zooms flous</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Analyzer Button -->
+        <div class="text-center mt-5">
+          <button type="submit" class="btn btn-primary btn-lg px-5 py-3" id="analyzeBtn">
+            <span class="btn-text">
+              <i class="fa-solid fa-brain me-2"></i>Lancer le Diagnostic Clinique IA
+            </span>
+            <span class="btn-loader d-none">
+              <span class="spinner-grow spinner-grow-sm me-2"></span>Analyse Dermatologique en cours…
+            </span>
+          </button>
+          <p class="text-muted small mt-2">
+            <i class="fa-solid fa-user-shield me-2 text-success"></i>Traitement sécurisé local en totale conformité avec le secret médical.
+          </p>
+        </div>
+      </form>
+    </div><!-- /dash-content -->
+  </div><!-- /dashboard-main -->
+</div><!-- /dashboard-wrapper -->
+
+<!-- High-Tech Scan Processing Modal -->
+<div class="modal fade" id="analyzingModal" data-bs-backdrop="static" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-md">
+    <div class="modal-content text-white" style="background: rgba(7, 11, 25, 0.95); backdrop-filter: blur(25px); border: 2.5px solid var(--cyan-primary); border-radius: var(--radius-lg); box-shadow: 0 0 40px rgba(0, 242, 254, 0.4);">
+      <div class="modal-body text-center p-5">
+        <div class="mb-4 d-inline-block text-primary position-relative" style="font-size: 4rem; animation: pulseScan 1.5s infinite alternate;">
+          <i class="fa-solid fa-laptop-medical"></i>
+        </div>
+        <h4 class="fw-bold text-gradient-cyan mb-2">SCAN DE LÉSION EN COURS</h4>
+        <p class="text-muted small">Le modèle de convolution Deep Learning VGG16 extrait et évalue les caractéristiques cliniques de la tumeur...</p>
+        
+        <div class="progress mt-4" style="height: 6px; background: rgba(255, 255, 255, 0.05); border-radius: 3px; overflow: hidden;">
+          <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary w-100"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function closeSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.querySelector('.sidebar-overlay');
+  if (sidebar) sidebar.classList.remove('open');
+  if (overlay) overlay.classList.remove('visible');
+}
+
+function previewImage(input) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('previewImg').src = e.target.result;
+    document.getElementById('uzFileName').textContent = file.name;
+    document.getElementById('uzFileSize').textContent = (file.size/1024/1024).toFixed(2) + ' Mo';
+    document.getElementById('uzContent').classList.add('d-none');
+    document.getElementById('uzPreview').classList.remove('d-none');
+    document.getElementById('uploadZone').style.borderColor = "var(--cyan-primary)";
+    document.getElementById('uploadZone').style.background = "rgba(0, 242, 254, 0.05)";
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeImage(event) {
+  event.stopPropagation();
+  document.getElementById('imageInput').value = '';
+  document.getElementById('uzContent').classList.remove('d-none');
+  document.getElementById('uzPreview').classList.add('d-none');
+  document.getElementById('uploadZone').style.borderColor = "rgba(0, 242, 254, 0.3)";
+  document.getElementById('uploadZone').style.background = "rgba(18, 28, 59, 0.3)";
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+  document.getElementById('uploadZone').style.borderColor = "var(--cyan-hover)";
+  document.getElementById('uploadZone').style.background = "rgba(0, 242, 254, 0.1)";
+}
+function handleDragLeave() {
+  document.getElementById('uploadZone').style.borderColor = "rgba(0, 242, 254, 0.3)";
+  document.getElementById('uploadZone').style.background = "rgba(18, 28, 59, 0.3)";
+}
+function handleDrop(e) {
+  e.preventDefault();
+  const files = e.dataTransfer.files;
+  if (files.length) {
+    document.getElementById('imageInput').files = files;
+    previewImage(document.getElementById('imageInput'));
+  }
+}
+
+// Form submission modal trigger
+document.getElementById('predictForm').addEventListener('submit', function(e) {
+  const img = document.getElementById('imageInput');
+  if (!img.files || !img.files[0]) {
+    e.preventDefault();
+    alert('Veuillez ajouter une imagerie dermatologique.');
+    return;
+  }
+  const btn = document.getElementById('analyzeBtn');
+  btn.querySelector('.btn-text').classList.add('d-none');
+  btn.querySelector('.btn-loader').classList.remove('d-none');
+  btn.disabled = true;
+  new bootstrap.Modal(document.getElementById('analyzingModal')).show();
+});
+</script>
+<style>
+@keyframes pulseScan {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  100% { transform: scale(1.05); opacity: 1; filter: drop-shadow(0 0 15px var(--cyan-glow)); }
+}
+</style>
+{% endblock %}

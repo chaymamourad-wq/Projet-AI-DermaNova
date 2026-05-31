@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+{% block title %}Administration - DermaNova{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}?v=2">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+  <!-- Dynamic Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-brand">
+        <i class="fa-solid fa-house-laptop"></i>
+        <span>Derma<span class="brand-ai">Nova</span></span>
+      </div>
+      <button class="sidebar-close btn btn-link text-white d-lg-none" onclick="closeSidebar()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Espace Clinique</div>
+      <a href="{{ url_for('dashboard') }}" class="sidebar-link">
+        <i class="fa-solid fa-chart-pie"></i><span>Tableau de Bord</span>
+      </a>
+      <a href="{{ url_for('predict') }}" class="sidebar-link">
+        <i class="fa-solid fa-microscope"></i><span>Nouvelle Analyse</span>
+        <span class="sidebar-badge">IA</span>
+      </a>
+      <a href="{{ url_for('patients') }}" class="sidebar-link">
+        <i class="fa-solid fa-clock-history"></i><span>Dossiers Patients</span>
+      </a>
+      
+      <div class="sidebar-section-label mt-4">Informations</div>
+      <a href="{{ url_for('about') }}" class="sidebar-link">
+        <i class="fa-solid fa-circle-info"></i><span>À propos</span>
+      </a>
+      <a href="{{ url_for('contact') }}" class="sidebar-link">
+        <i class="fa-solid fa-headset"></i><span>Contact Support</span>
+      </a>
+      
+      <div class="sidebar-section-label mt-4">Sécurité & Admin</div>
+      <a href="{{ url_for('admin') }}" class="sidebar-link sidebar-link-admin active">
+        <i class="fa-solid fa-user-shield"></i><span>Panel Super-Admin</span>
+      </a>
+    </nav>
+    
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="su-avatar">{{ session.get('username','?')[0]|upper }}</div>
+        <div class="su-info">
+          <div class="su-name text-white">{{ session.get('full_name','')[:15] }}</div>
+          <div class="su-role">{{ session.get('role','user')|capitalize }}</div>
+        </div>
+      </div>
+      <a href="{{ url_for('logout') }}" class="sidebar-logout" title="Déconnexion">
+        <i class="fa-solid fa-power-off"></i>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Mobile Overlay -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <!-- Main Content Workspace -->
+  <div class="dashboard-main">
+    <!-- Topbar Header -->
+    <header class="dash-topbar">
+      <button class="btn text-white d-lg-none me-3 p-0" id="sidebarToggle">
+        <i class="fa-solid fa-bars fs-3"></i>
+      </button>
+      <div>
+        <h5 class="dash-page-title text-gradient-cyan">Panneau d'Administration</h5>
+        <p class="text-muted small mb-0">Gestion de la sécurité des données praticiens et monitoring global.</p>
+      </div>
+      <div class="ms-auto">
+        <div class="badge bg-warning text-dark px-4 py-2 rounded-pill fw-bold" style="box-shadow: 0 0 10px rgba(245, 158, 11, 0.25);">
+          <i class="fa-solid fa-user-shield me-2"></i> Mode Super Admin
+        </div>
+      </div>
+    </header>
+
+    <!-- Dash Content -->
+    <div class="dash-content p-4">
+
+      <!-- Global Metrics -->
+      <div class="row g-4 mb-4" data-aos="fade-up">
+        <div class="col-sm-6 col-xl-3">
+          <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
+            <div class="sc-icon primary">
+              <i class="fa-solid fa-user-md"></i>
+            </div>
+            <div class="sc-num text-white">{{ users|length }}</div>
+            <div class="sc-label">Comptes Praticiens</div>
+          </div>
+        </div>
+        
+        <div class="col-sm-6 col-xl-3">
+          <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
+            <div class="sc-icon warning">
+              <i class="fa-solid fa-folder-closed"></i>
+            </div>
+            <div class="sc-num text-white">{{ total_analyses }}</div>
+            <div class="sc-label">Dossiers Dermatologiques</div>
+          </div>
+        </div>
+        
+        <div class="col-sm-6 col-xl-3">
+          <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
+            <div class="sc-icon danger">
+              <i class="fa-solid fa-biohazard"></i>
+            </div>
+            <div class="sc-num text-danger">{{ stats.malignant }}</div>
+            <div class="sc-label">Malignités Recensées</div>
+          </div>
+        </div>
+        
+        <div class="col-sm-6 col-xl-3">
+          <div class="stat-card" data-aos="fade-up" data-aos-delay="400">
+            <div class="sc-icon success">
+              <i class="fa-solid fa-heart-pulse"></i>
+            </div>
+            <div class="sc-num text-success">{{ stats.detection_rate }}%</div>
+            <div class="sc-label">Ratio de Détection Global</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4" data-aos="fade-up" data-aos-delay="150">
+        <!-- Praticiens Table -->
+        <div class="col-lg-8">
+          <div class="dash-card h-100">
+            <div class="dc-header">
+              <h6 class="dc-title"><i class="fa-solid fa-users-gear me-2 text-primary"></i>Gestion des Praticiens</h6>
+            </div>
+            <div class="dc-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover table-modern mb-0">
+                  <thead>
+                    <tr>
+                      <th class="ps-4">ID</th>
+                      <th>Utilisateur / Praticien</th>
+                      <th>Email</th>
+                      <th>Privilèges</th>
+                      <th>Créé le</th>
+                      <th class="pe-4 text-end">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for u in users %}
+                    <tr>
+                      <td class="ps-4 fw-bold text-muted">#{{ u.id }}</td>
+                      <td>
+                        <div class="d-flex align-items-center gap-3">
+                          <div class="patient-mini-avatar">
+                            {{ u.username[0]|upper }}
+                          </div>
+                          <div>
+                            <div class="fw-bold text-white">{{ u.username }}</div>
+                            <div class="small text-muted">{{ u.full_name or 'Dr. Non Spécifié' }}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td><span class="text-white opacity-85">{{ u.email }}</span></td>
+                      <td>
+                        <span class="badge-role badge-role-{{ u.role }}">{{ u.role|capitalize }}</span>
+                      </td>
+                      <td><span class="text-muted small">{{ (u.created_at | string)[:10] if u.created_at else '—' }}</span></td>
+                      <td class="pe-4 text-end">
+                        {% if u.id != session.user_id %}
+                        <form action="{{ url_for('delete_user', uid=u.id) }}" method="POST" class="d-inline" onsubmit="return confirm('Confirmez-vous la révocation définitive de ce compte praticien et de toutes ses données ?');">
+                          <button type="submit" class="btn btn-sm btn-outline-danger px-3 py-1" title="Révoquer l'accès">
+                            <i class="fa-solid fa-user-slash"></i>
+                          </button>
+                        </form>
+                        {% else %}
+                        <span class="badge bg-secondary px-3 py-1">Moi (Super)</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="6" class="text-center py-4 text-muted">Aucun compte enregistré.</td></tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Messages / Requests -->
+        <div class="col-lg-4">
+          <div class="dash-card h-100">
+            <div class="dc-header">
+              <h6 class="dc-title"><i class="fa-solid fa-inbox me-2 text-primary"></i>Dernières Requêtes</h6>
+            </div>
+            <div class="dc-body" style="max-height: 450px; overflow-y: auto;">
+              {% for msg in messages %}
+              <div class="p-3 rounded mb-3" style="background: rgba(11, 17, 38, 0.4); border: 1.5px solid var(--card-border);">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <div class="fw-bold text-primary small">{{ msg.name }}</div>
+                  <div class="small text-muted">{{ (msg.created_at | string)[:10] if msg.created_at else '—' }}</div>
+                </div>
+                <div class="small fw-bold text-white mb-1">{{ msg.subject or 'Requête Clinique' }}</div>
+                <p class="small text-muted mb-2" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-weight: 300;">
+                  {{ msg.message }}
+                </p>
+                <a href="mailto:{{ msg.email }}" class="small text-primary text-decoration-none">
+                  <i class="fa-solid fa-reply me-1"></i>Répondre ({{ msg.email }})
+                </a>
+              </div>
+              {% else %}
+              <div class="text-center text-muted py-5">
+                <div class="fs-1 opacity-25 mb-3"><i class="fa-solid fa-tray"></i></div>
+                Boîte de réception vide.
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /dash-content -->
+  </div><!-- /dashboard-main -->
+</div><!-- /dashboard-wrapper -->
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function closeSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.querySelector('.sidebar-overlay');
+  if (sidebar) sidebar.classList.remove('open');
+  if (overlay) overlay.classList.remove('visible');
+}
+</script>
+{% endblock %}

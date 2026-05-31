@@ -1,0 +1,346 @@
+/* ============================================================
+   DermaNova — Premium Authentication Styles (auth.css)
+============================================================ */
+
+.auth-wrapper {
+  min-height: calc(100vh - 85px);
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.auth-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  background: var(--bg-color);
+  overflow: hidden;
+}
+
+.auth-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  z-index: -1;
+  opacity: 0.4;
+}
+
+.auth-blob.b1 {
+  top: -10%;
+  left: -15%;
+  width: 45vw;
+  height: 45vw;
+  background: radial-gradient(circle, var(--cyan-glow) 0%, rgba(0,242,254,0) 70%);
+  animation: floatBlob 15s infinite alternate;
+}
+
+.auth-blob.b2 {
+  bottom: -15%;
+  right: -10%;
+  width: 40vw;
+  height: 40vw;
+  background: radial-gradient(circle, var(--purple-glow) 0%, rgba(127,0,255,0) 70%);
+  animation: floatBlob2 18s infinite alternate;
+}
+
+@keyframes floatBlob {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(5%, 5%) scale(1.1); }
+}
+
+@keyframes floatBlob2 {
+  0% { transform: translate(0, 0) scale(1.1); }
+  100% { transform: translate(-5%, -5%) scale(0.9); }
+}
+
+.min-vh-auth {
+  min-height: calc(100vh - 120px);
+}
+
+/* Left Panel Info (Desktop) */
+.auth-left {
+  padding: 2.5rem;
+  color: var(--text-primary);
+  z-index: 2;
+}
+
+.al-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.2rem;
+  background: rgba(232,191,226,0.1);
+  border: 1px solid rgba(232,191,226,0.25);
+  color: var(--color-accent-pink1);
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.1);
+}
+
+.al-title {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1.25;
+  margin-bottom: 1.25rem;
+}
+
+.al-sub {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  font-weight: 300;
+}
+
+.al-features {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.al-feat {
+  font-weight: 500;
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.al-feat i {
+  color: var(--color-accent-pink1);
+  text-shadow: 0 0 8px var(--glow-pink);
+}
+
+.al-demo {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(15px);
+  padding: 1.5rem;
+  margin-top: 2rem;
+  box-shadow: var(--shadow-md);
+}
+
+/* Glassmorphism Auth Card */
+.auth-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+  transition: var(--transition);
+}
+
+.auth-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-accent-pink1), var(--purple-accent), transparent);
+}
+
+.auth-card:hover {
+  border-color: rgba(232,191,226,0.35);
+  box-shadow: 0 30px 45px -5px rgba(0, 0, 0, 0.7), 0 10px 20px -5px rgba(0, 242, 254, 0.25);
+}
+
+.auth-card-header {
+  padding: 2.75rem 2.75rem 1rem;
+  text-align: center;
+}
+
+.auth-logo {
+  width: 60px;
+  height: 60px;
+  background: var(--bg-tertiary);
+  color: var(--cyan-primary);
+  border: 1.5px solid var(--cyan-primary);
+  border-radius: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 0 15px var(--glow-pink);
+  transition: var(--transition);
+}
+
+.auth-logo:hover {
+  transform: rotate(10deg) scale(1.05);
+}
+
+.auth-card-title {
+  font-weight: 700;
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.auth-card-sub {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-weight: 300;
+}
+
+.auth-card-body {
+  padding: 1rem 2.75rem 2.75rem;
+}
+
+.auth-field {
+  margin-bottom: 1.25rem;
+}
+
+.auth-field label {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.input-with-icon {
+  position: relative;
+}
+
+.field-icon {
+  position: absolute;
+  top: 50%;
+  left: 1.2rem;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  z-index: 10;
+  transition: var(--transition);
+}
+
+.auth-input {
+  background: rgba(18, 28, 59, 0.4);
+  border: 1.5px solid rgba(0, 242, 254, 0.15);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem 0.85rem 3rem;
+  color: var(--text-primary);
+  transition: var(--transition);
+  font-size: 0.95rem;
+  width: 100%;
+}
+
+.auth-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.auth-input:focus {
+  background: rgba(18, 28, 59, 0.7);
+  border-color: var(--color-accent-pink1);
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.auth-input:focus + .field-icon {
+  color: var(--color-accent-pink1);
+}
+
+.toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 1.2rem;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+  z-index: 10;
+  transition: var(--transition);
+}
+
+.toggle-password:hover {
+  color: var(--color-accent-pink1);
+}
+
+.btn-auth {
+  background: linear-gradient(135deg, var(--color-accent-pink1) 0%, var(--color-accent-pink2) 100%);
+  color: var(--bg-darkest);
+  border: none;
+  padding: 0.9rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 1.05rem;
+  box-shadow: 0 4px 15px rgba(0, 242, 254, 0.25);
+  transition: var(--transition);
+  width: 100%;
+  letter-spacing: 0.5px;
+}
+
+.btn-auth:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--glow-pink);
+  opacity: 0.95;
+}
+
+.auth-link {
+  color: var(--color-accent-pink2);
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.auth-link:hover {
+  color: var(--cyan-hover);
+  text-decoration: underline;
+  text-shadow: 0 0 8px rgba(232,191,226,0.4);
+}
+
+.auth-link-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: var(--transition);
+}
+
+.auth-link-back:hover {
+  color: var(--color-accent-pink1);
+}
+
+/* Password Strength Meter */
+.pwd-strength {
+  height: 5px;
+  background-color: rgba(255,255,255,0.05);
+  border-radius: 3px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.pwd-bar {
+  height: 100%;
+  width: 0;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.pwd-bar.very-weak { width: 20%; background-color: #ef4444; }
+.pwd-bar.weak { width: 40%; background-color: #f97316; }
+.pwd-bar.medium { width: 60%; background-color: #eab308; }
+.pwd-bar.strong { width: 80%; background-color: #10b981; }
+.pwd-bar.very-strong { width: 100%; background-color: #059669; }
+
+.pwd-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  display: block;
+  margin-top: 5px;
+}

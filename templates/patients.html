@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% block title %}Dossiers Patients{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}?v=2">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+  <!-- Dynamic Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-brand">
+        <i class="fa-solid fa-house-laptop"></i>
+        <span>Derma<span class="brand-ai">Nova</span></span>
+      </div>
+      <button class="sidebar-close btn btn-link text-white d-lg-none" onclick="closeSidebar()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Espace Clinique</div>
+      <a href="{{ url_for('dashboard') }}" class="sidebar-link">
+        <i class="fa-solid fa-chart-pie"></i><span>Tableau de Bord</span>
+      </a>
+      <a href="{{ url_for('predict') }}" class="sidebar-link">
+        <i class="fa-solid fa-microscope"></i><span>Nouvelle Analyse</span>
+        <span class="sidebar-badge">IA</span>
+      </a>
+      <a href="{{ url_for('patients') }}" class="sidebar-link active">
+        <i class="fa-solid fa-clock-history"></i><span>Dossiers Patients</span>
+      </a>
+      
+      <div class="sidebar-section-label mt-4">Informations</div>
+      <a href="{{ url_for('about') }}" class="sidebar-link">
+        <i class="fa-solid fa-circle-info"></i><span>À propos</span>
+      </a>
+      <a href="{{ url_for('contact') }}" class="sidebar-link">
+        <i class="fa-solid fa-headset"></i><span>Contact Support</span>
+      </a>
+      
+      {% if session.get('role') == 'admin' %}
+      <div class="sidebar-section-label mt-4">Sécurité & Admin</div>
+      <a href="{{ url_for('admin') }}" class="sidebar-link sidebar-link-admin">
+        <i class="fa-solid fa-user-shield"></i><span>Panel Super-Admin</span>
+      </a>
+      {% endif %}
+    </nav>
+    
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="su-avatar">{{ session.get('username','?')[0]|upper }}</div>
+        <div class="su-info">
+          <div class="su-name text-white">{{ session.get('full_name','')[:15] }}</div>
+          <div class="su-role">{{ session.get('role','user')|capitalize }}</div>
+        </div>
+      </div>
+      <a href="{{ url_for('logout') }}" class="sidebar-logout" title="Déconnexion">
+        <i class="fa-solid fa-power-off"></i>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Mobile Overlay -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <!-- Main Content Workspace -->
+  <div class="dashboard-main">
+    <!-- Topbar Header -->
+    <header class="dash-topbar">
+      <button class="btn text-white d-lg-none me-3 p-0" id="sidebarToggle">
+        <i class="fa-solid fa-bars fs-3"></i>
+      </button>
+      <div>
+        <h5 class="dash-page-title text-gradient-cyan">Historique Clinique</h5>
+        <p class="text-muted small mb-0">Consultez et recherchez l'ensemble des analyses effectuées</p>
+      </div>
+      <div class="ms-auto d-flex gap-2">
+        <a href="{{ url_for('predict') }}" class="btn btn-primary">
+          <i class="fa-solid fa-flask-vial me-2"></i>Lancer une Analyse
+        </a>
+      </div>
+    </header>
+
+    <!-- Dash Content -->
+    <div class="dash-content p-4">
+      
+      <!-- Filter and search card -->
+      <div class="dash-card mb-4" data-aos="fade-down">
+        <div class="dc-header py-3">
+          <h6 class="dc-title"><i class="fa-solid fa-magnifying-glass me-2 text-primary"></i>Rechercher un dossier</h6>
+        </div>
+        <div class="dc-body">
+          <form method="GET" action="{{ url_for('patients') }}" class="row g-3">
+            <div class="col-md-9 col-sm-8">
+              <div class="input-with-icon">
+                <i class="fa-solid fa-signature field-icon"></i>
+                <input type="text" name="q" value="{{ search }}" class="auth-input" placeholder="Saisir le nom d'un patient ou un résultat (Bénin / Malin)...">
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-4">
+              <button type="submit" class="btn btn-primary w-100 py-2">
+                <i class="fa-solid fa-magnifying-glass me-2"></i>Filtrer
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Patients History Glass Table -->
+      <div class="dash-card" data-aos="fade-up">
+        <div class="dc-header">
+          <h6 class="dc-title"><i class="fa-solid fa-folder-open me-2 text-primary"></i>Base de données Clinique ({{ patients|length }} dossiers)</h6>
+        </div>
+        <div class="dc-body p-0">
+          {% if patients %}
+          <div class="table-responsive">
+            <table class="table table-hover table-modern mb-0">
+              <thead>
+                <tr>
+                  <th class="ps-4">Patient</th>
+                  <th>Âge & Genre</th>
+                  <th>Diagnostic IA</th>
+                  <th>Confiance IA</th>
+                  <th>Date d'Examen</th>
+                  <th class="pe-4 text-end">Options / Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for p in patients %}
+                <tr>
+                  <td class="ps-4">
+                    <div class="d-flex align-items-center gap-3">
+                      <div class="patient-mini-avatar">{{ p.name[0]|upper }}</div>
+                      <div>
+                        <div class="fw-bold text-white mb-0">{{ p.name }}</div>
+                        <div class="text-muted small">ID Dossier : #{{ p.id }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="text-white opacity-85">{{ p.age or '—' }} ans</span> | <span class="text-muted">{{ p.gender or '—' }}</span></td>
+                  <td>
+                    <span class="result-badge {% if p.result == 'Malignant' %}result-malignant{% else %}result-benign{% endif %}">
+                      <i class="fa-solid fa-{% if p.result == 'Malignant' %}triangle-exclamation{% else %}circle-check{% endif %} me-1"></i>
+                      {% if p.result == 'Malignant' %}Maligne{% else %}Bénigne{% endif %}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="confidence-bar-mini">
+                      <div class="cbm-fill {% if p.result == 'Malignant' %}cbm-danger{% else %}cbm-success{% endif %}"
+                           style="width:{{ (p.probability*100)|round(0) }}%"></div>
+                    </div>
+                    <span class="small text-white fw-bold">{{ (p.probability*100)|round(1) }}%</span>
+                  </td>
+                  <td><span class="text-muted small">{{ (p.created_at | string)[:16] if p.created_at else '—' }}</span></td>
+                  <td class="pe-4 text-end">
+                    <div class="d-flex justify-content-end gap-2">
+                      <a href="{{ url_for('result', patient_id=p.id) }}" class="btn btn-sm btn-outline-primary px-3 py-1" title="Visualiser le rapport">
+                        <i class="fa-solid fa-eye me-1"></i>Rapport
+                      </a>
+                      
+                      <form action="{{ url_for('delete_patient', pid=p.id) }}" method="POST" onsubmit="return confirm('Confirmez-vous la suppression définitive de ce dossier médical ?');" style="margin:0;">
+                        <button type="submit" class="btn btn-sm btn-outline-danger px-3 py-1" title="Supprimer le dossier">
+                          <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="empty-state">
+            <div class="empty-icon">
+              <i class="fa-solid fa-ban"></i>
+            </div>
+            <h6 class="text-white mt-3 fw-bold">Aucun Dossier Trouvé</h6>
+            <p class="text-muted small">Aucun diagnostic médical ne correspond à vos critères de recherche.</p>
+            <a href="{{ url_for('predict') }}" class="btn btn-primary btn-sm mt-3">
+              <i class="fa-solid fa-flask-vial me-2"></i>Lancer une Nouvelle Analyse
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div><!-- /dash-content -->
+  </div><!-- /dashboard-main -->
+</div><!-- /dashboard-wrapper -->
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function closeSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.querySelector('.sidebar-overlay');
+  if (sidebar) sidebar.classList.remove('open');
+  if (overlay) overlay.classList.remove('visible');
+}
+</script>
+{% endblock %}

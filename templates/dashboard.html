@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+{% block title %}Dashboard Clinique{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}?v=2">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+  <!-- Dynamic Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-brand">
+        <i class="fa-solid fa-house-laptop"></i>
+        <span>Derma<span class="brand-ai">Nova</span></span>
+      </div>
+      <button class="sidebar-close btn btn-link text-white d-lg-none" onclick="closeSidebar()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Espace Clinique</div>
+      <a href="{{ url_for('dashboard') }}" class="sidebar-link active">
+        <i class="fa-solid fa-chart-pie"></i><span>Tableau de Bord</span>
+      </a>
+      <a href="{{ url_for('predict') }}" class="sidebar-link">
+        <i class="fa-solid fa-microscope"></i><span>Nouvelle Analyse</span>
+        <span class="sidebar-badge">IA</span>
+      </a>
+      <a href="{{ url_for('patients') }}" class="sidebar-link">
+        <i class="fa-solid fa-clock-history"></i><span>Dossiers Patients</span>
+      </a>
+      
+      <div class="sidebar-section-label mt-4">Informations</div>
+      <a href="{{ url_for('about') }}" class="sidebar-link">
+        <i class="fa-solid fa-circle-info"></i><span>À propos</span>
+      </a>
+      <a href="{{ url_for('contact') }}" class="sidebar-link">
+        <i class="fa-solid fa-headset"></i><span>Contact Support</span>
+      </a>
+      
+      {% if session.get('role') == 'admin' %}
+      <div class="sidebar-section-label mt-4">Sécurité & Admin</div>
+      <a href="{{ url_for('admin') }}" class="sidebar-link sidebar-link-admin">
+        <i class="fa-solid fa-user-shield"></i><span>Panel Super-Admin</span>
+      </a>
+      {% endif %}
+    </nav>
+    
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="su-avatar">{{ session.get('username','?')[0]|upper }}</div>
+        <div class="su-info">
+          <div class="su-name text-white">{{ session.get('full_name','')[:15] }}</div>
+          <div class="su-role">{{ session.get('role','user')|capitalize }}</div>
+        </div>
+      </div>
+      <a href="{{ url_for('logout') }}" class="sidebar-logout" title="Déconnexion">
+        <i class="fa-solid fa-power-off"></i>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Mobile Overlay -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <!-- Main Content Workspace -->
+  <div class="dashboard-main">
+    <!-- Topbar Header -->
+    <header class="dash-topbar">
+      <button class="btn text-white d-lg-none me-3 p-0" id="sidebarToggle">
+        <i class="fa-solid fa-bars fs-3"></i>
+      </button>
+      <div>
+        <h5 class="dash-page-title text-gradient-cyan">Espace Diagnostique</h5>
+        <p class="text-muted small mb-0">
+          Bienvenue, <span class="text-white fw-bold">{{ session.get('full_name','') }}</span> —
+          <span id="currentDate" class="text-primary"></span>
+        </p>
+      </div>
+      <div class="ms-auto d-flex align-items-center gap-2">
+        <a href="{{ url_for('predict') }}" class="btn btn-primary">
+          <i class="fa-solid fa-flask-vial me-2"></i>Nouvelle Analyse
+        </a>
+      </div>
+    </header>
+
+    <!-- Dash Content -->
+    <div class="dash-content p-4">
+      
+      <!-- Statistics Cards Grid -->
+      <div class="row g-4 mb-4">
+        <!-- Card 1 -->
+        <div class="col-sm-6 col-xl-3">
+          <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
+            <div class="sc-icon primary"><i class="fa-solid fa-clipboard-list"></i></div>
+            <div class="sc-num text-white">{{ stats.total }}</div>
+            <div class="sc-label">Total Diagnostics</div>
+            <div class="sc-trend"><i class="fa-solid fa-chart-line text-primary"></i> <span>Activité Active</span></div>
+          </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="col-sm-6 col-xl-3">
+          <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
+            <div class="sc-icon danger"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="sc-num text-danger">{{ stats.malignant }}</div>
+            <div class="sc-label">Malignités Détectées</div>
+            <div class="sc-trend text-danger"><i class="fa-solid fa-circle-exclamation me-1"></i> Suivi Urgent</div>
+          </div>
+        </div>
+        <!-- Card 3 -->
+        <div class="col-sm-6 col-xl-3">
+          <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
+            <div class="sc-icon success"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="sc-num text-success">{{ stats.benign }}</div>
+            <div class="sc-label">Cas Bénins Identifiés</div>
+            <div class="sc-trend text-success"><i class="fa-solid fa-shield-heart me-1"></i> Normal / Rassurant</div>
+          </div>
+        </div>
+        <!-- Card 4 -->
+        <div class="col-sm-6 col-xl-3">
+          <div class="stat-card" data-aos="fade-up" data-aos-delay="400">
+            <div class="sc-icon warning"><i class="fa-solid fa-heart-pulse"></i></div>
+            <div class="sc-num text-warning">{{ stats.detection_rate }}%</div>
+            <div class="sc-label">Indice de Malignité</div>
+            <div class="sc-trend"><i class="fa-solid fa-laptop-code text-warning"></i> Ratio Diagnostique</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SaaS Dynamic Charts -->
+      <div class="row g-4 mb-4">
+        <!-- Line Chart -->
+        <div class="col-lg-8">
+          <div class="dash-card" data-aos="fade-right">
+            <div class="dc-header">
+              <h6 class="dc-title"><i class="fa-solid fa-chart-line me-2 text-primary"></i>Courbe d'Évolution Clinique</h6>
+              <div class="dc-actions">
+                <button class="btn btn-sm btn-outline-primary border-0" onclick="refreshChart()" title="Actualiser">
+                  <i class="fa-solid fa-rotate"></i>
+                </button>
+              </div>
+            </div>
+            <div class="dc-body" style="position:relative; height:280px">
+              <canvas id="mainChart"></canvas>
+            </div>
+          </div>
+        </div>
+        <!-- Donut Chart -->
+        <div class="col-lg-4">
+          <div class="dash-card h-100" data-aos="fade-left">
+            <div class="dc-header">
+              <h6 class="dc-title"><i class="fa-solid fa-chart-pie me-2 text-success"></i>Répartition des Diagnostics</h6>
+            </div>
+            <div class="dc-body" style="position:relative; height:280px">
+              <canvas id="donutChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Patient Table -->
+      <div class="dash-card" data-aos="fade-up">
+        <div class="dc-header">
+          <h6 class="dc-title"><i class="fa-solid fa-clipboard-user me-2 text-primary"></i>Analyses Dermatologiques Récentes</h6>
+          <a href="{{ url_for('patients') }}" class="btn btn-sm btn-outline-primary">
+            Voir Historique Complet <i class="fa-solid fa-arrow-right ms-2"></i>
+          </a>
+        </div>
+        <div class="dc-body p-0">
+          {% if recent %}
+          <div class="table-responsive">
+            <table class="table table-hover table-modern mb-0">
+              <thead>
+                <tr>
+                  <th class="ps-4">Patient</th>
+                  <th>Genre</th>
+                  <th>Résultat IA</th>
+                  <th>Taux de Confiance</th>
+                  <th>Date du Diagnostic</th>
+                  <th class="pe-4 text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for p in recent %}
+                <tr>
+                  <td class="ps-4">
+                    <div class="d-flex align-items-center gap-3">
+                      <div class="patient-mini-avatar">{{ p.name[0]|upper }}</div>
+                      <div>
+                        <div class="fw-bold text-white mb-0">{{ p.name }}</div>
+                        <div class="text-muted small">{{ p.age or '—' }} ans</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="text-white opacity-75">{{ p.gender or '—' }}</span></td>
+                  <td>
+                    <span class="result-badge {% if p.result == 'Malignant' %}result-malignant{% else %}result-benign{% endif %}">
+                      <i class="fa-solid fa-{% if p.result == 'Malignant' %}triangle-exclamation{% else %}circle-check{% endif %} me-1"></i>
+                      {% if p.result == 'Malignant' %}Maligne{% else %}Bénigne{% endif %}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="confidence-bar-mini">
+                      <div class="cbm-fill {% if p.result == 'Malignant' %}cbm-danger{% else %}cbm-success{% endif %}"
+                           style="width:{{ (p.probability*100)|round(0) }}%"></div>
+                    </div>
+                    <span class="small text-white fw-bold">{{ (p.probability*100)|round(1) }}%</span>
+                  </td>
+                  <td><span class="text-muted">{{ (p.created_at | string)[:16] if p.created_at else '—' }}</span></td>
+                  <td class="pe-4 text-end">
+                    <a href="{{ url_for('result', patient_id=p.id) }}"
+                       class="btn btn-sm btn-outline-primary px-3 py-1">
+                      <i class="fa-solid fa-eye me-1"></i>Rapport
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="empty-state">
+            <div class="empty-icon">
+              <i class="fa-solid fa-folder-open"></i>
+            </div>
+            <h6 class="text-white mt-3 fw-bold">Aucune Analyse Recensée</h6>
+            <p class="text-muted small">Aucun diagnostic dermatologique n'est actuellement rattaché à votre compte.</p>
+            <a href="{{ url_for('predict') }}" class="btn btn-primary btn-sm mt-3">
+              <i class="fa-solid fa-camera-retro me-2"></i>Lancer une Première Analyse
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div><!-- /dash-content -->
+  </div><!-- /dashboard-main -->
+</div><!-- /dashboard-wrapper -->
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+// Format clinical header date
+document.getElementById('currentDate').textContent =
+  new Date().toLocaleDateString('fr-FR', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+
+// Trigger charts
+const stats = {{ stats | tojson }};
+initDashboardCharts(stats);
+
+// Custom Sidebar trigger
+function closeSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.querySelector('.sidebar-overlay');
+  if (sidebar) sidebar.classList.remove('open');
+  if (overlay) overlay.classList.remove('visible');
+}
+</script>
+{% endblock %}

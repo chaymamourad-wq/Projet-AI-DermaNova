@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}DermaNova{% endblock %} — Diagnostic Dermatologique IA Premium</title>
+
+  <!-- Bootstrap 5 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- FontAwesome 6 for Advanced Medical/AI Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <!-- Google Fonts Outfit -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}">
+  <!-- AOS CSS -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <!-- CSS principal -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/premium.css') }}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════
+     DYNAMIC BACKGROUND & PARTICLES
+     ══════════════════════════════════════════════════ -->
+<div id="particles-bg"></div>
+<div class="hero-bg-glow"></div>
+<div class="hero-bg-glow-2"></div>
+
+<!-- ══════════════════════════════════════════════════
+     HIGH-TECH PAGE PRE-LOADER
+     ══════════════════════════════════════════════════ -->
+<div id="page-loader">
+  <div class="loader-inner">
+    <div class="loader-pulse"></div>
+    <p class="loader-text">DermaNova AI</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     NAVBAR
+     ══════════════════════════════════════════════════ -->
+<nav class="navbar navbar-expand-lg navbar-premium sticky-top" id="mainNav">
+  <div class="container">
+    <!-- Brand Logo -->
+    <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('index') }}">
+      <div class="brand-icon">
+        <i class="fa-solid fa-brain fs-3"></i>
+      </div>
+      <span class="brand-text">Derma<span class="brand-ai">Nova</span></span>
+    </a>
+
+    <!-- Mobile Toggler -->
+    <button class="navbar-toggler border-0 text-white" type="button"
+            data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <i class="bi bi-list fs-3"></i>
+    </button>
+
+    <!-- Menu Links -->
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto align-items-center gap-1">
+        <li class="nav-item">
+          <a class="nav-link nav-link-custom {% if request.endpoint=='index' %}active{% endif %}"
+             href="{{ url_for('index') }}">
+            <i class="fa-solid fa-house-chimney me-2"></i>Accueil
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-link-custom {% if request.endpoint=='about' %}active{% endif %}"
+             href="{{ url_for('about') }}">
+            <i class="fa-solid fa-circle-info me-2"></i>À Propos
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-link-custom {% if request.endpoint=='contact' %}active{% endif %}"
+             href="{{ url_for('contact') }}">
+            <i class="fa-solid fa-circle-nodes me-2"></i>Contact
+          </a>
+        </li>
+
+        {% if session.get('user_id') %}
+          <li class="nav-item">
+            <a class="nav-link nav-link-custom {% if request.endpoint=='dashboard' %}active{% endif %}"
+               href="{{ url_for('dashboard') }}">
+              <i class="fa-solid fa-chart-line me-2"></i>Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav-link-custom {% if request.endpoint=='predict' %}active{% endif %}"
+               href="{{ url_for('predict') }}">
+              <i class="fa-solid fa-microscope me-2"></i>Analyser
+            </a>
+          </li>
+          {% if session.get('role') == 'admin' %}
+          <li class="nav-item">
+            <a class="nav-link nav-link-custom text-warning {% if request.endpoint=='admin' %}active{% endif %}"
+               href="{{ url_for('admin') }}">
+              <i class="fa-solid fa-user-shield me-2"></i>Admin
+            </a>
+          </li>
+          {% endif %}
+          
+          <!-- Profile Dropdown -->
+          <li class="nav-item dropdown ms-lg-2 mt-2 mt-lg-0">
+            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 p-0"
+               href="#" data-bs-toggle="dropdown">
+              <div class="nav-avatar">
+                {{ session.get('username','?')[0]|upper }}
+              </div>
+              <span class="d-none d-lg-inline text-white small">
+                {{ session.get('full_name', session.get('username'))[:15] }}
+              </span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-glass p-2">
+              <li>
+                <div class="px-3 py-2">
+                  <div class="fw-bold text-white">{{ session.get('full_name', '') }}</div>
+                  <div class="text-muted small mb-1">{{ session.get('email','') }}</div>
+                  <span class="badge-role badge-role-{{ session.get('role','user') }}">
+                    {{ session.get('role','user')|capitalize }}
+                  </span>
+                </div>
+              </li>
+              <li><hr class="dropdown-divider border-secondary opacity-25"></li>
+              <li><a class="dropdown-item rounded" href="{{ url_for('dashboard') }}">
+                <i class="fa-solid fa-circle-user me-2 text-primary"></i>Dashboard
+              </a></li>
+              <li><a class="dropdown-item rounded" href="{{ url_for('patients') }}">
+                <i class="fa-solid fa-list-check me-2 text-primary"></i>Mes analyses
+              </a></li>
+              <li><hr class="dropdown-divider border-secondary opacity-25"></li>
+              <li><a class="dropdown-item text-danger rounded" href="{{ url_for('logout') }}">
+                <i class="fa-solid fa-right-from-bracket me-2"></i>Déconnexion
+              </a></li>
+            </ul>
+          </li>
+        {% else %}
+          <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
+            <a class="btn btn-outline-primary btn-sm px-4" href="{{ url_for('login') }}">
+              <i class="fa-solid fa-arrow-right-to-bracket me-2"></i>Connexion
+            </a>
+          </li>
+          <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+            <a class="btn btn-primary btn-sm px-4" href="{{ url_for('register') }}">
+              S'inscrire <i class="fa-solid fa-chevron-right ms-2 fs-7"></i>
+            </a>
+          </li>
+        {% endif %}
+
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════
+     FLASH MESSAGES
+     ══════════════════════════════════════════════════ -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="flash-container">
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }} alert-dismissible alert-custom fade show" role="alert">
+      <i class="fa-solid fa-{% if category=='success' %}circle-check text-success{% elif category=='danger' %}circle-exclamation text-danger{% elif category=='warning' %}triangle-exclamation text-warning{% else %}circle-info text-info{% endif %} me-2"></i>
+      {{ message }}
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+{% endwith %}
+
+<!-- ══════════════════════════════════════════════════
+     MAIN PANEL CONTENT
+     ══════════════════════════════════════════════════ -->
+<main id="main-content">
+  {% if error_code %}
+  <div class="container py-5 text-center">
+    <div class="glass-panel p-5 d-inline-block" style="max-width: 500px;">
+      <div class="text-danger mb-3" style="font-size: 4.5rem; font-weight: 800; line-height: 1;">
+        {{ error_code }}
+      </div>
+      <h3 class="mb-4">{{ error_msg }}</h3>
+      <a href="{{ url_for('index') }}" class="btn btn-primary">
+        <i class="fa-solid fa-arrow-left me-2"></i>Retourner à l'accueil
+      </a>
+    </div>
+  </div>
+  {% else %}
+  {% block content %}{% endblock %}
+  {% endif %}
+</main>
+
+<!-- ══════════════════════════════════════════════════
+     FOOTER
+     ══════════════════════════════════════════════════ -->
+<footer class="footer-modern mt-auto">
+  <div class="footer-top">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <div class="footer-brand">
+            <div class="brand-icon brand-icon-lg mb-3" style="color: var(--cyan-primary); filter: drop-shadow(0 0 8px var(--cyan-glow));">
+              <i class="fa-solid fa-brain fs-1"></i>
+            </div>
+            <h5 class="fw-bold">Derma<span class="text-primary">Nova</span></h5>
+            <p class="text-muted small">
+              Plateforme virtuelle dermatologique clinique. L'excellence de l'intelligence artificielle au service du diagnostic médical de pointe.
+            </p>
+          </div>
+        </div>
+        <div class="col-lg-2 col-6">
+          <h6 class="footer-title">Navigation</h6>
+          <ul class="footer-links">
+            <li><a href="{{ url_for('index') }}">Accueil</a></li>
+            <li><a href="{{ url_for('about') }}">À propos</a></li>
+            <li><a href="{{ url_for('contact') }}">Contact</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-2 col-6">
+          <h6 class="footer-title">Application</h6>
+          <ul class="footer-links">
+            {% if session.get('user_id') %}
+            <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('predict') }}">Analyser</a></li>
+            <li><a href="{{ url_for('patients') }}">Historique</a></li>
+            {% else %}
+            <li><a href="{{ url_for('login') }}">Connexion</a></li>
+            <li><a href="{{ url_for('register') }}">Inscription</a></li>
+            {% endif %}
+          </ul>
+        </div>
+        <div class="col-lg-4">
+          <h6 class="footer-title">Contact Clinique</h6>
+          <ul class="footer-links">
+            <li><i class="fa-solid fa-envelope me-2 text-primary"></i>contact@dermanova.tn</li>
+            <li><i class="fa-solid fa-map-location-dot me-2 text-primary"></i>ENSTAB, Université de Carthage</li>
+            <li><i class="fa-solid fa-square-phone me-2 text-primary"></i>+216 71 XXX XXX</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <p class="mb-0 text-muted small">
+        © 2026 DermaNova — Excellence Diagnostique Dermatologique.
+      </p>
+      <p class="mb-0 text-muted small">
+        <i class="fa-solid fa-shield-halved text-success me-2"></i>Données Cliniques Crypées &nbsp;|&nbsp;
+        <i class="fa-solid fa-cpu text-primary me-2"></i>Propulsé par VGG16 Deep Learning
+      </p>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════════════════
+     SCROLL TO TOP
+     ══════════════════════════════════════════════════ -->
+<button class="scroll-top-btn" id="scrollTop" title="Haut de page">
+  <i class="fa-solid fa-chevron-up"></i>
+</button>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- AOS JS -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<!-- Particles JS -->
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script>
+  AOS.init({
+    duration: 800,
+    once: true,
+    easing: 'ease-out-cubic'
+  });
+</script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/premium.js') }}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

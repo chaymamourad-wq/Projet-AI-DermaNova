@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Connexion{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+{% endblock %}
+{% block content %}
+<div class="auth-wrapper">
+  <div class="auth-bg">
+    <div class="auth-blob b1"></div>
+    <div class="auth-blob b2"></div>
+  </div>
+  <div class="container">
+    <div class="row justify-content-center align-items-center min-vh-auth">
+      <!-- Left panel -->
+      <div class="col-lg-6 d-none d-lg-block">
+        <div class="auth-left" data-aos="fade-right">
+          <div class="al-badge">
+            <i class="fa-solid fa-microscope text-primary"></i>
+            <span>DermaNova AI Clinical Hub</span>
+          </div>
+          <h2 class="al-title text-gradient-cyan">L'Intelligence Artificielle au Service de la Dermatologie</h2>
+          <p class="al-sub">Analysez, diagnostiquez et gérez vos rapports d'analyses avec une précision clinique augmentée par le Deep Learning.</p>
+          <div class="al-features">
+            <div class="al-feat"><i class="fa-solid fa-circle-check"></i><span>Classification VGG16 optimisée</span></div>
+            <div class="al-feat"><i class="fa-solid fa-circle-check"></i><span>Génération de rapports PDF officiels</span></div>
+            <div class="al-feat"><i class="fa-solid fa-circle-check"></i><span>Données et dossiers médicaux cryptés</span></div>
+            <div class="al-feat"><i class="fa-solid fa-circle-check"></i><span>Espace de travail clinique fluide</span></div>
+          </div>
+          <div class="al-demo">
+            <h6 class="text-white mb-2"><i class="fa-solid fa-circle-info text-primary me-2"></i>Accès Clinique Démo :</h6>
+            <div class="row g-2 text-muted small">
+              <div class="col-sm-6"><strong>Médecin/Admin :</strong> admin<br><strong>Mot de passe :</strong> Admin1234</div>
+              <div class="col-sm-6"><strong>Médecin Démo :</strong> dr_demo<br><strong>Mot de passe :</strong> Doctor123</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Right panel – login form -->
+      <div class="col-lg-5 col-md-8">
+        <div class="glass-panel p-4" style="background: rgba(11, 17, 38, 0.5); border: 1px solid var(--card-border); border-radius: 12px;" data-aos="fade-left">
+          <div class="auth-card-header text-center mb-4">
+            <div class="auth-logo mb-2"><i class="fa-solid fa-lock text-primary"></i></div>
+            <h4 class="auth-card-title text-gradient-cyan">Connexion Clinique</h4>
+            <p class="auth-card-sub text-muted">Veuillez vous authentifier pour accéder à l'espace IA</p>
+          </div>
+          <div class="auth-card-body">
+            <form method="POST" action="{{ url_for('login') }}" id="loginForm" novalidate>
+              <div class="auth-field mb-3">
+                <label for="username" class="form-label text-white">Identifiant ou Email</label>
+                <div class="input-with-icon">
+                  <i class="fa-solid fa-user-doctor field-icon"></i>
+                  <input type="text" class="auth-input" id="username" name="username" placeholder="Identifiant ou email" required autocomplete="username">
+                </div>
+              </div>
+              <div class="auth-field mb-3">
+                <label for="password" class="form-label text-white">Mot de passe</label>
+                <div class="input-with-icon">
+                  <i class="fa-solid fa-key field-icon"></i>
+                  <input type="password" class="auth-input" id="password" name="password" placeholder="Mot de passe confidentiel" required autocomplete="current-password">
+                  <button type="button" class="toggle-password" onclick="togglePwd('password')"><i class="fa-solid fa-eye" id="eye-password"></i></button>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-auth w-100" id="loginBtn">
+                <span class="btn-text"><i class="fa-solid fa-right-to-bracket me-2"></i>Se Connecter</span>
+                <span class="btn-loader d-none"><span class="spinner-border spinner-border-sm me-2"></span>Chargement…</span>
+              </button>
+            </form>
+            <div class="auth-footer mt-4 text-center">
+              <p class="text-muted small">Nouveau praticien ? <a href="{{ url_for('register') }}" class="auth-link">Créer un compte de santé</a></p>
+              <a href="{{ url_for('index') }}" class="auth-link-back"><i class="fa-solid fa-arrow-left me-1"></i>Retour à l'accueil</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+function togglePwd(id) {
+  const inp = document.getElementById(id);
+  const ico = document.getElementById('eye-'+id);
+  if (inp.type === 'password') { inp.type = 'text'; ico.className = 'fa-solid fa-eye-slash'; }
+  else { inp.type = 'password'; ico.className = 'fa-solid fa-eye'; }
+}
+
+document.getElementById('loginForm').addEventListener('submit', function() {
+  const btn = document.getElementById('loginBtn');
+  btn.querySelector('.btn-text').classList.add('d-none');
+  btn.querySelector('.btn-loader').classList.remove('d-none');
+  btn.disabled = true;
+});
+</script>
+{% endblock %}

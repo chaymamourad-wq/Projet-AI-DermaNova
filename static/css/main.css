@@ -1,0 +1,223 @@
+/* ------------------------------------------------------------
+   Premium Dark‑Blue Theme for DermaNova
+   Palette:
+   #0a1128  – Deep Ocean/Navy
+   #001f54  – Slate Dark Blue
+   #003566  – Mid Navy
+   #90e0ef  – Sky Blue
+   #00b4d8  – Vivid Cyan
+   #0077b6  – Royal Blue
+   #caf0f8  – Ice Blue
+ ------------------------------------------------------------ */
+
+:root {
+  --bg-primary: #0a1128;        /* Deep navy blue background */
+  --bg-secondary: #001f54;      /* Darker navy */
+  --bg-tertiary: #003566;       /* Mid navy */
+  --pink-1: #90e0ef;            /* Sky blue for accents */
+  --pink-2: #00b4d8;            /* Vivid cyan */
+  --pink-3: #0077b6;            /* Royal blue */
+  --pink-4: #caf0f8;            /* Ice blue for highlights */
+  --text-primary: #ffffff;      /* White readable text */
+  --text-muted: #b0b0b0;        /* Subtle muted text */
+}
+
+/* ---------- Global layout ---------- */
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
+/* ----------- Animated dark‑pink gradient background ----------- */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-primary));
+  z-index: -2;
+  animation: gradientShift 30s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%   { background: linear-gradient(135deg, #0a1128, #001f54); }
+  50%  { background: linear-gradient(135deg, #001f54, #003566); }
+  100% { background: linear-gradient(135deg, #0a1128, #001f54); }
+}
+
+/* ------------------ Particles container ------------------ */
+#particles-js {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ------------- Glass‑morphism utilities ------------- */
+.glass-panel, .navbar-glass, .dropdown-glass {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+  border-radius: 12px;
+}
+
+.glass-panel {
+  padding: 1.5rem;
+}
+
+/* ----------- Navbar ----------- */
+.navbar-glass {
+  background: rgba(0,0,0,0.45);
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+
+.nav-link-custom {
+  color: var(--text-primary) !important;
+  position: relative;
+  transition: color .2s;
+}
+
+.nav-link-custom::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--pink-2);
+  opacity: 0;
+  border-radius: 6px;
+  transition: opacity .2s;
+}
+
+.nav-link-custom:hover {
+  color: var(--pink-3) !important;
+}
+
+.nav-link-custom.active::after {
+  opacity: 0.15;
+}
+
+/* ----------- Buttons ----------- */
+.btn-primary {
+  background: var(--pink-2);
+  border: none;
+  color: var(--bg-primary);
+  transition: background .3s, transform .2s;
+}
+
+.btn-primary:hover {
+  background: var(--pink-1);
+  transform: translateY(-2px);
+}
+
+.btn-outline-primary {
+  border-color: var(--pink-2);
+  color: var(--pink-2);
+}
+
+.btn-outline-primary:hover {
+  background: rgba(255,255,255,0.08);
+  color: var(--pink-3);
+}
+
+/* ----------- Cards & Panels ----------- */
+.card {
+  background: rgba(255,255,255,0.06);
+  border: none;
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+.card-header {
+  background: rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  color: var(--pink-4);
+}
+
+/* ---------- Dashboard statistics (Chart.js) ---------- */
+.chart-container {
+  position: relative;
+  height: 300px;
+  margin: 1rem 0;
+}
+
+/* ---------- Flash messages ---------- */
+.alert-custom {
+  background: rgba(0,0,0,0.35);
+  border: none;
+  color: var(--text-primary);
+  padding: .75rem 1.25rem;
+  border-radius: 8px;
+}
+
+/* ---------- Footer ---------- */
+.footer-modern {
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  padding-top: 3rem;
+}
+
+.footer-modern .footer-top {
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  padding-bottom: 2rem;
+}
+
+.footer-modern a {
+  color: var(--pink-3);
+  transition: color .2s;
+}
+
+.footer-modern a:hover {
+  color: var(--pink-1);
+}
+
+/* ---------- Scroll‑to‑top button ---------- */
+.scroll-top-btn {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  background: var(--pink-2);
+  color: var(--bg-primary);
+  border: none;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity .3s, transform .3s;
+  cursor: pointer;
+}
+.scroll-top-btn.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- Theme toggle (dark only for now) ---------- */
+[data-theme="dark"] {
+  /* all variables already set for dark */
+}
+
+/* ---------- AOS fade‑in overrides ---------- */
+[data-aos="fade-up"] {
+  transition-property: transform, opacity;
+}
+
+/* ---------- Responsive tweaks ---------- */
+@media (max-width: 768px) {
+  .navbar-glass .container {
+    flex-direction: column;
+  }
+}
+
+/* ------------------------------------------------------------
+   End of Theme
+------------------------------------------------------------ */

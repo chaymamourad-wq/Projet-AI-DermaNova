@@ -1,0 +1,32 @@
+/* variables.css – Global color palette and design tokens */
+:root {
+  /* Primary dark shades - premium deep navy blue */
+  --color-bg-primary: #0a1128;          /* Deep navy blue background */
+  --color-bg-dark: #001f54;            /* Slate dark blue */
+  --color-bg-gradient-start: #0a1128;  /* Gradient start */
+  --color-bg-gradient-end: #001f54;    /* Gradient end */
+
+  /* Accent palette – soft premium blues and cyans */
+  --color-accent-pink1: #00b4d8;        /* Vivid medical cyan */
+  --color-accent-pink2: #90e0ef;        /* Light sky blue */
+  --color-accent-mauve: #0077b6;        /* Deep royal blue */
+
+  /* Neutral colors */
+  --color-white: #ffffff;
+  --color-light-gray: #f5f5f5;
+  --color-gray: #b0b0b0;
+
+  /* Glow colors for subtle neon effects */
+  --glow-pink: rgba(0, 180, 216, 0.4);
+  --glow-mauve: rgba(144, 224, 239, 0.4);
+
+  /* Card and glassmorphism */
+  --card-bg: rgba(255,255,255,0.07);
+  --card-border: rgba(255,255,255,0.12);
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --transition: all 0.3s ease;
+  --shadow-md: 0 4px 30px rgba(0,0,0,0.4);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.5);
+}

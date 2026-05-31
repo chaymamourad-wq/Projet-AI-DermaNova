@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}Contact - DermaNova{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="position: relative; z-index: 1;">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      
+      <div class="text-center mb-5" data-aos="fade-down">
+        <div class="d-inline-flex mb-3 px-3 py-2 rounded-pill" 
+             style="background: rgba(0, 242, 254, 0.1); border: 1.5px solid rgba(0, 242, 254, 0.25);">
+          <span class="text-primary small fw-bold text-uppercase letter-spacing-1">Support & Relations Cliniques</span>
+        </div>
+        <h1 class="fw-bold text-white mb-2">Prendre Contact</h1>
+        <p class="text-muted lead">Une question scientifique, technique, ou académique ?<br>Nos experts et développeurs sont à votre écoute.</p>
+      </div>
+
+      <div class="row g-4">
+        <!-- Contact Informations -->
+        <div class="col-md-5" data-aos="fade-right">
+          <div class="glass-panel p-4 h-100" style="background: rgba(0, 114, 255, 0.05); border-color: rgba(0, 114, 255, 0.25);">
+            <h3 class="fw-bold text-white mb-4"><i class="fa-solid fa-hospital me-2 text-primary"></i>Clinique Info</h3>
+            
+            <div class="d-flex align-items-start mb-4">
+              <div class="fs-4 text-primary me-3 mt-1"><i class="fa-solid fa-map-location-dot"></i></div>
+              <div>
+                <h6 class="fw-bold mb-1 text-white">Adresse Physique</h6>
+                <p class="mb-0 small text-muted">ENSTAB, Technopôle de Borj Cédria<br>BP 95, Hammam-Lif 2050, Tunisie</p>
+              </div>
+            </div>
+            
+            <div class="d-flex align-items-start mb-4">
+              <div class="fs-4 text-primary me-3 mt-1"><i class="fa-solid fa-square-envelope"></i></div>
+              <div>
+                <h6 class="fw-bold mb-1 text-white">Support Technique</h6>
+                <p class="mb-0 small text-muted">support@dermanova.tn</p>
+              </div>
+            </div>
+            
+            <div class="d-flex align-items-start mb-4">
+              <div class="fs-4 text-primary me-3 mt-1"><i class="fa-solid fa-square-phone"></i></div>
+              <div>
+                <h6 class="fw-bold mb-1 text-white">Ligne Standard</h6>
+                <p class="mb-0 small text-muted">+216 71 430 498</p>
+              </div>
+            </div>
+
+            <div class="mt-5 pt-4 border-top border-secondary border-opacity-25">
+              <h6 class="fw-bold mb-3 text-white">Réseaux Universitaires</h6>
+              <div class="d-flex gap-3">
+                <a href="#" class="btn btn-outline-primary rounded-circle d-flex align-items-center justify-content-center" style="width:40px; height:40px; padding:0;"><i class="fa-brands fa-linkedin-in"></i></a>
+                <a href="#" class="btn btn-outline-primary rounded-circle d-flex align-items-center justify-content-center" style="width:40px; height:40px; padding:0;"><i class="fa-brands fa-github"></i></a>
+                <a href="#" class="btn btn-outline-primary rounded-circle d-flex align-items-center justify-content-center" style="width:40px; height:40px; padding:0;"><i class="fa-brands fa-x-twitter"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Column -->
+        <div class="col-md-7" data-aos="fade-left">
+          <div class="glass-panel p-4 p-md-5 h-100">
+            <h3 class="fw-bold text-white mb-4"><i class="fa-solid fa-paper-plane me-2 text-primary"></i>Envoyer un message</h3>
+            
+            <form action="{{ url_for('contact') }}" method="POST">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <div class="auth-field">
+                    <label class="form-label text-white">Nom Complet *</label>
+                    <div class="input-with-icon">
+                      <i class="fa-solid fa-user-md field-icon"></i>
+                      <input type="text" name="name" class="auth-input" required placeholder="Dr. Prénom NOM">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <div class="auth-field">
+                    <label class="form-label text-white">Email Professionnel *</label>
+                    <div class="input-with-icon">
+                      <i class="fa-solid fa-envelope field-icon"></i>
+                      <input type="email" name="email" class="auth-input" required placeholder="praticien@clinique.tn">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <div class="auth-field">
+                  <label class="form-label text-white">Objet du Message</label>
+                  <div class="input-with-icon">
+                    <i class="fa-solid fa-tags field-icon"></i>
+                    <input type="text" name="subject" class="auth-input" placeholder="Ex: Déploiement du modèle ou intégration MySQL">
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mb-4">
+                <div class="auth-field">
+                  <label class="form-label text-white">Message / Requête *</label>
+                  <textarea name="message" class="auth-input" rows="5" required placeholder="Comment pouvons-nous vous accompagner ?"></textarea>
+                </div>
+              </div>
+              
+              <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill">
+                <i class="fa-solid fa-paper-plane me-2"></i> Transmettre la Demande
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
