@@ -9,9 +9,35 @@ detection of skin cancer lesions.
 
 ## Screenshots
 
-| Home | Dashboard | Result |
-|------|-----------|--------|
-| ![Home](screenshots/banner.png) | ![Dashboard](screenshots/dashboard.png) | ![Result](screenshots/result.png) |
+### Landing Page
+| Home | About |
+|------|-------|
+| ![Home](screenshots/banner.png) | ![About](screenshots/about.png) |
+
+### Authentication
+| Login | Register |
+|-------|----------|
+| ![Login](screenshots/login.png) | ![Register](screenshots/register.png) |
+
+### Doctor Space
+| Dashboard | Patients |
+|-----------|----------|
+| ![Dashboard](screenshots/dashboard_doctor.png) | ![Patients](screenshots/patients.png) |
+
+### AI Analysis
+| Result Benign | Result Malign |
+|---------------|---------------|
+| ![Benign](screenshots/result_benign.png) | ![Malign](screenshots/result_malign.png) |
+
+### Administration
+| Dashboard Admin | Admin Panel |
+|-----------------|-------------|
+| ![Dashboard Admin](screenshots/dashboard.png) | ![Admin Panel](screenshots/admin_panel.png) |
+
+### Other
+| Contact |
+|---------|
+| ![Contact](screenshots/contact.png) |
 
 ---
 
